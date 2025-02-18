@@ -1,0 +1,7 @@
+[default]
+access_key = manticore
+secret_key = manticore
+host_base = s3.manticoresearch.com:9000
+host_bucket = s3.manticoresearch.com:9000/%(bucket)s
+use_https = False
+signature_v2 = True 
