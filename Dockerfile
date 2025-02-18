@@ -1,17 +1,18 @@
-# Use a minimal base image with required tools
+# Use a minimal base image
 FROM alpine:latest
 
-# Install required packages and set up permissions in a single layer
-RUN apk add --no-cache s3cmd bash && \
-    mkdir -p /upload && \
-    chmod +x /upload.sh
+# Install required packages in a single layer
+RUN apk add --no-cache s3cmd bash
+
+# Set working directory
+WORKDIR /upload
 
 # Copy necessary files in a single step
 COPY s3cfg /root/.s3cfg
 COPY upload.sh /upload.sh
 
-# Set the working directory
-WORKDIR /upload
+# Set execute permissions on the script
+RUN chmod +x /upload.sh
 
 # Set the entrypoint
 ENTRYPOINT ["/upload.sh"]
