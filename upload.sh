@@ -5,6 +5,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+GRAY='\033[0;37m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
 
@@ -23,24 +24,29 @@ echo -e "${YELLOW}📂 Files to be uploaded:${NC}"
 ls -lh | grep -v "^total" | awk '{print "  " $9 " (" $5 ")"}'
 echo
 
-# Ask for issue/PR number
-echo -e "${BLUE}🔗 Please enter the related issue URL/number${NC}"
-echo -e "${GRAY}(e.g., https://github.com/manticoresoftware/manticoresearch/issues/123 or just 123):${NC}"
-read issue_input
-
-# Extract number from input
-if [[ $issue_input =~ [0-9]+$ ]]; then
-    issue_number=${BASH_REMATCH[0]}
+# Use provided argument if available
+if [ -n "$1" ]; then
+    upload_path="$1"
 else
-    echo -e "${RED}❌ Error: Could not extract issue number from input${NC}"
-    exit 1
+    # Ask for issue/PR number
+    echo -e "${BLUE}🔗 Please enter the related issue URL/number${NC}"
+    echo -e "${GRAY}(e.g., https://github.com/manticoresoftware/manticoresearch/issues/123 or just 123):${NC}"
+    read issue_input
+
+    # Extract number from input
+    if [[ $issue_input =~ [0-9]+$ ]]; then
+        issue_number=${BASH_REMATCH[0]}
+    else
+        echo -e "${RED}❌ Error: Could not extract issue number from input${NC}"
+        exit 1
+    fi
+
+    # Generate timestamp
+    timestamp=$(date +%Y%m%d)
+
+    # Create upload path
+    upload_path="issue-${timestamp}-${issue_number}"
 fi
-
-# Generate timestamp
-timestamp=$(date +%Y%m%d)
-
-# Create upload path
-upload_path="issue-${timestamp}-${issue_number}"
 
 # Show progress message
 echo -e "\n${YELLOW}📤 Starting upload process...${NC}"
